@@ -4,6 +4,10 @@
 /* maximum error length */
 #define POISON_MAX_ERROR 1024
 
+/* error codes */
+/* NULL session was passed to function */
+#define POISON_SESSION_NULL -2
+
 typedef ip_addr_t uint32_t;
 
 /* the strategy used to gain MITM;
