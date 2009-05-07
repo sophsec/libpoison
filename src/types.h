@@ -3,6 +3,9 @@
 
 typedef ip_addr_t uint32_t;
 
+
+
+
 /* the strategy used to gain MITM;
    these aren't necessarily mutually exclusive */
 typedef enum
@@ -12,6 +15,7 @@ typedef enum
 	POISON_DNS   /* DNS forgery  */
 } poison_strategy_t;
 
+/* this is the status flag type: what strategies have we used? */
 typedef poison_status_t uint32_t;
 
 /* status flags */
