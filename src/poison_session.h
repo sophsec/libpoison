@@ -2,7 +2,7 @@
 #define _LIBPOISON_SESSION_H_
 
 /* libpoison session: this is the highest data type
-   used for intialization, and clean up */
+   used for intialization and clean up */
 typedef struct
 {
 	/* list of targets */
