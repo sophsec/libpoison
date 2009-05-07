@@ -20,8 +20,11 @@ typedef struct
 	/* dhcp options */
 	poison_dhcp_options_t *dhcp;	
 
-	/* libnet session */
-	libnet_t *libnet_packet;
+	/* libnet sessions
+	   each attack has they reside at different layers */
+	libnet_t *dhcp_packet;
+	libnet_t *arp_packet;
+	libnet_t *dns_packet;
 
 } poison_session_t;
 
