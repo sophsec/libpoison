@@ -7,6 +7,7 @@ typedef struct
 {
 	/* error reporting buffer */
 	char errbuf[POISON_MAX_ERROR];
+	char libnet_err[LIBNET_ERRBUF_SIZE];
 
 	/* initialized flag */
 	unsigned int initialized;

@@ -10,8 +10,6 @@
    returns error code reflecting that  */
 int poison_init(poison_session_t *session, char *interface)
 {
-	char libnet_err[LIBNET_ERRBUF_SIZE];
-
 	/* No session given? FAIL! */
 	if (!session)
 	{
@@ -32,15 +30,92 @@ int poison_init(poison_session_t *session, char *interface)
 	memset((char *)session, 0, sizeof(poison_session_t));
 	memset(libnet_err, 0, sizeof(libnet_err));
 
-	/* setup libnet */	
-	session->arp_packet = libnet_init(LIBNET_LINK, interface, &libnet_err);
+	/* setup libnet context for arp */	
+	session->arp_packet = libnet_init(LIBNET_LINK, interface, &session->libnet_err);
 
+	/* verify it worked */
 	if (!session->arp_packet)
 	{
-		strcpy(session->errbuf, "libnet_init for ARP failed: ");
-		strncpy(session->errbuf, libnet_err, 
-				sizeof(session->errbuf) - strlen(session->errbuf) - 1);
+		strcpy(session->errbuf, "libnet_init for ARP failed");
 		return POISON_LIBNET_ERR;
 	}
+
+	/* setup libnet context for dhcp */
+	session->dhcp_packet = libnet_init(LIBNET_RAW4, interface, &session->libnet_err);
+
+	/* verify it worked */
+	if (!session->dhcp_packet)
+	{
+		strcpy(session->errbuf, "libnet_init for DHCP failed");
+		return POISON_LIBNET_ERR;
+	}
+
+	/* setup libnet context for dns */
+	session->dns_packet = libnet_init(LIBNET_RAW4, interface, &session->libnet_err);
+
+	/* verify it worked */
+	if (!session->dns_packet)
+	{
+		strcpy(session->errbuf, "libnet_init for DNS failed");
+		return POISON_LIBNET_ERR;
+	}
+
+	/* set flag */
+	session->initialized = SESSION_INITIALIZED;	
+	return POISON_OK;
 }
+
+
+/* a check function: are we initialized? */
+int poison_check_init(poison_session_t *session)
+{
+	/* verify session is not NULL */
+	if (!session)
+	{
+		return POISON_SESSION_NULL;
+	}
+
+	/* check if initialized */
+	if (SESSION_INITIALIZED == session->initialized)
+	{
+		return POISON_ALREADY_INIT;
+	}
+
+	/* not initialized */
+	return POISON_NOT_INIT;
+}
+
+/* shutdown poison: close libnet / pcap contexts
+	free memory lists */
+int poison_shutdown(poison_session_t *session)
+{
+	if (!session)
+	{
+		return POISON_SESSION_NULL;
+	}
+
+	if (SESSION_INITILIAZED != session->initialized)
+	{
+		return POISON_NOT_INIT;
+	}
+
+	if (session->targets_all)
+	{
+		poison_free_targets(session->targets_all);
+	}
+	
+	if (session->targets_active)
+	{
+		poison_free_targets(session->targets_active);
+	}
+
+	if (poison->dhcp)
+	{
+		poison_free_dhcp(poison->dhcp);
+	}
+
+	return POISON_OK;
+}
+
+
 

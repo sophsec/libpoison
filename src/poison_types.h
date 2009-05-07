@@ -1,7 +1,6 @@
 #ifndef _LIBPOISON_TYPES_H_
 #define _LIBPOISON_TYPES_H_
 
-
 /* maximum error length */
 #define POISON_MAX_ERROR 1024
 
@@ -11,8 +10,18 @@
 /* error codes */
 /* NULL session was passed to function */
 #define POISON_SESSION_NULL -2
+
+/* session has already been initialized */
 #define POISON_ALREADY_INIT -5
-#define POISON_LIBNET_ERR	-8
+
+/* session has not been initialized */
+#define POISON_NOT_INIT		-7
+
+/* libnet returned an error */
+#define POISON_LIBNET_ERR	-9
+
+/* everything is OK */
+#define POISON_OK			0
 
 typedef ip_addr_t uint32_t;
 
