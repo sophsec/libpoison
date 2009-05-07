@@ -3,9 +3,6 @@
 
 typedef ip_addr_t uint32_t;
 
-
-
-
 /* the strategy used to gain MITM;
    these aren't necessarily mutually exclusive */
 typedef enum
@@ -22,5 +19,16 @@ typedef poison_status_t uint32_t;
 #define LP_STATUS_ARP  0x01 /* ARP poisoning being performed on target */
 #define LP_STATUS_DHCP 0x02 /* DHCP forgery being performed on target */
 #define LP_STATUS_DNS  0x04 /* DNS forgery being performed on target */
+
+
+/* state data for future use: resuming state prior to poisoning */
+typedef struct
+{
+	ip_addr_t ip_addr;
+	unsigned char mac_addr[6];
+	poison_state_t *next;
+
+} poison_state_t;
+
 
 #endif
