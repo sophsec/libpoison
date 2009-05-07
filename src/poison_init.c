@@ -107,10 +107,10 @@ void poison_shutdown(poison_session_t *session)
 		poison_free_targets(session->targets_all);
 	}
 	
-	/* free targets_active list */
-	if (session->targets_active)
+	/* free targets_waiting list */
+	if (session->targets_waiting)
 	{
-		poison_free_targets(session->targets_active);
+		poison_free_targets(session->targets_waiting);
 	}
 
 	/* free dhcp poison options */

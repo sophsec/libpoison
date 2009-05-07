@@ -15,6 +15,9 @@ struct poison_target
 	/* MAC of target */
 	unsigned char mac_addr[6];
 
+	/* strategy to poison this target */
+	
+
 	/* status flags of poisoning */
 	poison_status_t status;
 

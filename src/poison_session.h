@@ -12,14 +12,11 @@ typedef struct
 	/* initialized flag */
 	unsigned int initialized;
 
-	/* list of all potential targets */
-	poison_target_t *targets_all;
+	/* list of all targets, owned and potential to own */
+	poison_target_t *targets;
 
-	/* list of targets actively poisoned */
-	poison_target_t *targets_active;
-
-	/* dhcp options */
-	poison_dhcp_options_t *dhcp;	
+	/* list of targets to be owned, awaiting trigger */
+	poison_target_t *triggers;
 
 	/* libnet sessions
 	   each attack has they reside at different layers */

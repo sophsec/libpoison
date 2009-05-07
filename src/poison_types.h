@@ -8,6 +8,10 @@
 #define POISON_INITIALIZED 0x31337
 
 /* error codes */
+
+/* everything is OK */
+#define POISON_OK			0
+
 /* NULL session was passed to function */
 #define POISON_SESSION_NULL -2
 
@@ -20,27 +24,34 @@
 /* libnet returned an error */
 #define POISON_LIBNET_ERR	-9
 
-/* everything is OK */
-#define POISON_OK			0
+/* memory error.. */
+#define POISON_NOMEM		-11
+
+/* define state corruption */
+#define POISON_CORRUPT		-21
 
 typedef ip_addr_t uint32_t;
 
-/* the strategy used to gain MITM;
-   these aren't necessarily mutually exclusive */
-typedef enum
-{
-	POISON_ARP,  /* ARP poisoning */
-	POISON_DHCP, /* DHCP forgery */
-	POISON_DNS   /* DNS forgery  */
-} poison_strategy_t;
+/* strategy: how to MITM this target */
+typedef poison_strategy_t uint32_t;
 
 /* this is the status flag type: what strategies have we used? */
 typedef poison_status_t uint32_t;
 
+/* strategy flags */
+#define POISON_DHCP_REQUEST  0x01
+#define POISON_DHCP_DISCOVER 0x02
+#define POISON_DHCP_BOTH     0x03
+#define POISON_ARP_REQUEST   0x04
+#define POISON_ALL_NO_DNS    0x07
+#define POISON_DNS_REQUEST   0x08
+#define POISON_ALL           0x0f
+
+
 /* status flags */
-#define LP_STATUS_ARP  0x01 /* ARP poisoning being performed on target */
-#define LP_STATUS_DHCP 0x02 /* DHCP forgery being performed on target */
-#define LP_STATUS_DNS  0x04 /* DNS forgery being performed on target */
+#define POISON_STATUS_ARP  0x01 /* ARP poisoning being performed on target */
+#define POISON_STATUS_DHCP 0x02 /* DHCP forgery being performed on target */
+#define POISON_STATUS_DNS  0x04 /* DNS forgery being performed on target */
 
 
 /* state data for future use: resuming state prior to poisoning */
