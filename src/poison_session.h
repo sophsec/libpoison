@@ -5,6 +5,9 @@
    used for intialization and clean up */
 typedef struct
 {
+	/* error reporting buffer */
+	char errbuf[POISON_MAX_ERROR];
+
 	/* initialized flag */
 	unsigned int initialized;
 
