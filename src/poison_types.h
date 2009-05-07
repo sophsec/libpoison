@@ -11,6 +11,7 @@
 /* error codes */
 /* NULL session was passed to function */
 #define POISON_SESSION_NULL -2
+#define POISON_ALREADY_INIT -5
 
 typedef ip_addr_t uint32_t;
 
