@@ -5,11 +5,17 @@
    used for intialization and clean up */
 typedef struct
 {
-	/* list of targets */
-	poison_target_t *targets;
+	/* list of all potential targets */
+	poison_target_t *targets_all;
+
+	/* list of targets actively poisoned */
+	poison_target_t *targets_active;
 
 	/* dhcp options */
 	poison_dhcp_options_t *dhcp;	
+
+	/* libnet session */
+	libnet_t *libnet_packet;
 
 } poison_session_t;
 

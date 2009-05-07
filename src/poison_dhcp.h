@@ -18,7 +18,7 @@ typedef struct
 	/* dhcp strategy for this node */
 	poison_dhcp_strategy_t strategy;
 
-	/* target of this node- points to node on global target list */
+	/* target of this node- points to node on active target list */
 	poison_target_t *target;
 
 	/* next node */
