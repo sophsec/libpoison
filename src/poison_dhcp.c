@@ -5,7 +5,9 @@
 
 #include <libnet.h>
 
-int poison_add_dhcp(poison_session_t *session, poison_dhcp_strategy_t strategy, poison_target_t *target)
+/* 
+	this function registers a new target for dhcp poisoning*/
+int poison_add_dhcp(poison_session_t *session, poison_target_t *target, dhcp_strategy_t)
 {
 	
 

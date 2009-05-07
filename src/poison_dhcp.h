@@ -12,12 +12,18 @@ typedef enum
 
 } poison_dhcp_strategy_t;
 
-/* structure of options, per target */
+/* structure of dhcp options, per target */
 typedef struct
 {
+	/* dhcp strategy for this node */
 	poison_dhcp_strategy_t strategy;
+
+	/* target of this node- points to node on global target list */
 	poison_target_t *target;
+
+	/* next node */
 	poison_dhcp_options *next;
+
 } poison_dhcp_options_t;
 
 #endif
