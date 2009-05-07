@@ -1,8 +1,12 @@
 #ifndef _LIBPOISON_TYPES_H_
 #define _LIBPOISON_TYPES_H_
 
+
 /* maximum error length */
 #define POISON_MAX_ERROR 1024
+
+/* status flag for initialized */
+#define POISON_INITIALIZED 0x31337
 
 /* error codes */
 /* NULL session was passed to function */
