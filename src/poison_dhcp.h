@@ -9,6 +9,7 @@ typedef enum
 	DHCP_HIJACK_BOTH,     /* "race" to both request and discover */
 	DHCP_EXHAUST_LEASES,  /* exhaust remaining leases on server  */
 	DHCP_SPOOF_RELEASE    /* spoof release from target to server */
+
 } poison_dhcp_strategy_t;
 
 /* structure of options, per target */
@@ -16,7 +17,6 @@ typedef struct
 {
 	poison_dhcp_strategy_t strategy;
 	poison_target_t *target;
-
 	poison_dhcp_options *next;
 } poison_dhcp_options_t;
 
