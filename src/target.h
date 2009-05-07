@@ -6,7 +6,7 @@
 struct poison_target;
 typedef struct poison_target poison_target_t;
 
-struct poison_target;
+struct poison_target
 {
 	ip_addr_t ip_addr;
 	unsigned char mac_addr[6];
