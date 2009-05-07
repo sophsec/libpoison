@@ -10,6 +10,7 @@ struct poison_target;
 {
 	ip_addr_t ip_addr;
 	unsigned char mac_addr[6];
+	poison_status_t status;
 
 	poison_target_t *next;
 };
