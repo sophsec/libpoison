@@ -5,6 +5,9 @@
    used for intialization and clean up */
 typedef struct
 {
+	/* initialized flag */
+	unsigned int initialized;
+
 	/* list of all potential targets */
 	poison_target_t *targets_all;
 
