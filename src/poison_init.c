@@ -87,34 +87,57 @@ int poison_check_init(poison_session_t *session)
 
 /* shutdown poison: close libnet / pcap contexts
 	free memory lists */
-int poison_shutdown(poison_session_t *session)
+void poison_shutdown(poison_session_t *session)
 {
+	/* verify session is not NULL */
 	if (!session)
 	{
-		return POISON_SESSION_NULL;
+		return;
 	}
 
+	/* if session is not initialized, fail */
 	if (SESSION_INITILIAZED != session->initialized)
 	{
-		return POISON_NOT_INIT;
+		return;
 	}
 
+	/* free targets_all list */
 	if (session->targets_all)
 	{
 		poison_free_targets(session->targets_all);
 	}
 	
+	/* free targets_active list */
 	if (session->targets_active)
 	{
 		poison_free_targets(session->targets_active);
 	}
 
+	/* free dhcp poison options */
 	if (poison->dhcp)
 	{
 		poison_free_dhcp(poison->dhcp);
 	}
 
-	return POISON_OK;
+	/* close libnet dhcp packet */
+	if (poison->dhcp_packet)
+	{
+		libnet_destroy(poison->dhcp_packet);
+	}
+
+	/* close libnet arp packet */
+	if (poison->arp_packet)
+	{
+		libnet_destroy(poison->arp_packet);
+	}
+
+	/* close libnet dns packet */
+	if (poison->dns_packet)
+	{
+		libnet_destroy(poison->dns_packet);
+	}
+
+	return;
 }
 
 
