@@ -30,13 +30,13 @@
 /* define state corruption */
 #define POISON_CORRUPT		-21
 
-typedef ip_addr_t uint32_t;
+typedef uint32_t ip_addr_t;
 
 /* strategy: how to MITM this target */
-typedef poison_strategy_t uint32_t;
+typedef uint32_t poison_strategy_t;
 
 /* this is the status flag type: what strategies have we used? */
-typedef poison_status_t uint32_t;
+typedef uint32_t poison_status_t;
 
 /* strategy flags */
 #define POISON_DHCP_REQUEST  0x01
