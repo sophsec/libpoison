@@ -9,7 +9,7 @@ typedef struct poison_target poison_target_t;
 struct poison_target;
 {
 	ip_addr_t ip_addr;
-	unsigned char mac_addr[48];
+	unsigned char mac_addr[6];
 
 	poison_target_t *next;
 };
