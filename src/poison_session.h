@@ -1,6 +1,11 @@
 #ifndef _LIBPOISON_SESSION_H_
 #define _LIBPOISON_SESSION_H_
 
+#include <libnet.h>
+
+#include "poison_types.h"
+#include "poison_target.h"
+
 /* libpoison session: this is the highest data type
    used for intialization and clean up */
 typedef struct
