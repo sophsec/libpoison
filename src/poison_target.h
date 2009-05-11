@@ -1,7 +1,8 @@
 #ifndef _LIBPOISON_TARGET_H_
 #define _LIBPOISON_TARGET_H_
 
-#include "types.h"
+#include "poison_types.h"
+#include "poison_host.h"
 
 /* turn the struct into a type ;D */
 typedef struct poison_target poison_target_t;
@@ -9,14 +10,10 @@ typedef struct poison_target poison_target_t;
 /* target information list node */
 struct poison_target
 {
-	/* IP of target */
-	ip_addr_t ip_addr;
-
-	/* MAC of target */
-	unsigned char mac_addr[6];
+	/* the host information of the target */
+	poison_host_t host;
 
 	/* strategy to poison this target */
-	
 
 	/* status flags of poisoning */
 	poison_status_t status;
