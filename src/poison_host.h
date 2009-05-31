@@ -5,11 +5,11 @@
 
 typedef struct
 {
-	/* IP of target */
-	ip_addr_t ip_addr;
+	/* IP  */
+	ip_addr_t ip;
 
-	/* MAC of target */
-	unsigned char mac_addr[6];
+	/* MAC */
+	unsigned char mac[6];
 } poison_host_t;
 
 #endif
