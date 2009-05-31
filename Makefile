@@ -2,8 +2,8 @@ CC = gcc
 CFLAGS = -Wall -O2 -ggdb
 LIB_FLAGS = -lpcap -lnet
 
-OBJS = src/poison_host.o src/poison_target.o src/poison_trigger.o src/poison_session.o
-HEADERS = src/poison_types.h src/poison_host.h src/poison_target.h src/poison_trigger.h src/poison_session.h
+OBJS = src/poison_host.o src/poison_target.o src/poison_trigger.o src/poison_session.o src/poison_arp.o src/poison_dhcp.o
+HEADERS = src/poison_types.h src/poison_host.h src/poison_target.h src/poison_trigger.h src/poison_session.h src/poison_arp.h src/poison_dhcp.h
 
 LIB_DIR = /usr/local/lib/
 INCLUDE_DIR = /usr/local/include/
@@ -24,6 +24,12 @@ src/poison_trigger.o: src/poison_trigger.h src/poison_trigger.c
 
 src/poison_session.o: src/poison_session.h src/poison_session.c
 	gcc $(CFLAGS) -c src/poison_session.c -o src/poison_session.o
+
+src/poison_arp.o: src/poison_arp.h src/poison_arp.c
+	gcc $(CFLAGS) -c src/poison_arp.c -o src/poison_arp.o
+
+src/poison_dhcp.o: src/poison_dhcp.h src/poison_dhcp.c
+	gcc $(CFLAGS) -c src/poison_dhcp.c -o src/poison_dhcp.o
 
 clean:
 	rm -rf $(OBJS) libpoison.so
