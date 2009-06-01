@@ -14,12 +14,108 @@ typedef enum
 
 } poison_dhcp_strategy_t;
 
-/* structure of dhcp options, per target */
+
+
 typedef struct
 {
-	/* dhcp strategy for this node */
-	poison_dhcp_strategy_t strategy;
+	dhcp_xid_t txid;
+	/* client MAC is 16 bytes per old bootp standard */
+	unsigned char clientmac[16];
+	ip_addr_t clientip;
+	char hostname[256];
 
-} poison_dhcp_options_t;
+} poison_discover_opts_t;
+
+typedef struct
+{
+	dhcp_xid_t txid;
+	
+	/* this is the IP being offered, 
+	   it may or may not be the same as the client IP
+	   such as in cases where a client already has an IP
+	   but will be offered a different one */
+	ip_addr_t offeredip;
+
+	/* client ip: this is likely to be 255.255.255.255 
+	   unless the client already has an IP */
+	ip_addr_t clientip;
+
+	/* IP of the gateway */
+	ip_addr_t routerip;
+	
+	/* IP of the dhcp server */
+	ip_addr_t serverip;
+
+	/* netmask */
+	ip_addr_t netmask;
+	
+	/* dns server */
+	ip_addr_t dns;
+		
+	/* domain name */
+	char domain[256];
+	
+	/* lease time */
+	size_t leasetime;
+
+	unsigned char servermac[6];
+	unsigned char clientmac[6];
+} poison_offer_opts_t;
+
+typedef struct
+{
+	dhcp_xid_t txid;
+	
+	ip_addr_t ackedip;
+
+	/* client ip: this is likely to be 255.255.255.255 
+	   unless the client already has an IP */
+	ip_addr_t clientip;
+
+	/* IP of the gateway */
+	ip_addr_t routerip;
+	
+	/* IP of the dhcp server */
+	ip_addr_t serverip;
+
+	/* netmask */
+	ip_addr_t netmask;
+	
+	/* dns server */
+	ip_addr_t dns;
+		
+	/* domain name */
+	char domain[256];
+	
+	/* lease time */
+	size_t leasetime;
+
+	unsigned char servermac[6];
+	unsigned char clientmac[6];
+} poison_ack_opts_t;
+
+typedef struct
+{
+	dhcp_xid_t txid;
+	ip_addr_t clientip;
+	/* client MAC is 16 bytes per old bootp standard */
+	unsigned char clientmac[16];
+	ip_addr_t serverip;	
+	ip_addr_t servermac[6];
+
+} poison_release_opts_t;
+
+
+typedef struct 
+{
+	ip_addr_t clientip;
+	ip_addr_t serverip;
+	
+	/* client MAC is 16 bytes per old bootp standard */
+	unsigned char clientmac[16];
+	char hostname[256];
+	char fqdn[256];
+} poison_request_opts_t;
+
 
 #endif
