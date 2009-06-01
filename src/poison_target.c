@@ -1,4 +1,7 @@
 
+/* for now #if 0, until ready to be worked on */
+#if 0
+
 /* allocate a new target */
 /* error checking done by caller! */
 poison_target_t *poison_new_target(void)
@@ -32,3 +35,5 @@ void poison_free_targets(poison_target_t *list)
 
 	return;
 }
+
+#endif

@@ -15,8 +15,9 @@ int poison_arp(poison_session_t *session, unsigned short op, unsigned char *dest
 	libnet_ptag_t arptag;
 	libnet_ptag_t ethertag;
 	
+	/* build basic ARP packet */
 	arptag = libnet_build_arp(ARPHERD_ETHER, ETHERTYPE_IP, 6, 4, op, srcMAC, 
-				srcIP, destMAC, destIP, NULL, 0, session->arp_packet, arptag);
+				srcIP, destMAC, destIP, NULL, 0, session->arp_packet, 0);
 
 	if (arptag == -1)
 	{
@@ -24,8 +25,9 @@ int poison_arp(poison_session_t *session, unsigned short op, unsigned char *dest
 		return POISON_LIBNET_ERR;
 	}
 
+	/* build ethernet underneath */
 	ethertag = libnet_build_ethernet(destMAC, srcMAC, ETHERTYPE_ARP, NULL,
-				0, session->arp_packet, ethertag);		
+				0, session->arp_packet, 0);		
 	
 	if (ethertag == -1)
 	{
@@ -33,12 +35,15 @@ int poison_arp(poison_session_t *session, unsigned short op, unsigned char *dest
 		return POISON_LIBNET_ERR;
 	}
 
+	
+	/* write to wire */
 	if (libnet_write(session->arp_packet) == -1)
 	{
 		strcpy(session->errbuf, "libnet_write() failed!\n");
 		return POISON_LIBNET_ERR;
 	}
 
+	/* clean up packet for reuse */
 	libnet_clear_packet(session->arp_packet);
 		
 	return POISON_OK;

@@ -1,5 +1,9 @@
 #include "poison_session.h"
 
+/* if 0 for now: to get other files compiling 
+	until this is ready to be worked on  */
+#if 0
+
 int poison_register_trigger(poison_session_t *session, poison_strategy_t strategy, poison_target_t *target)
 {
 	poison_target_t *node;
@@ -72,3 +76,7 @@ int poison_register_trigger(poison_session_t *session, poison_strategy_t strateg
 	
 	/* target is not on trigger list already, add it */
 }
+
+#endif
+
+
