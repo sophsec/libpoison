@@ -17,11 +17,15 @@ typedef struct
 	/* initialized flag */
 	unsigned int initialized;
 
+	/* interface name */
+	char interface[64];
+
 	/* list of all targets, owned and potential to own */
 	poison_target_t *targets;
 
 	/* list of targets to be owned, awaiting trigger */
 	poison_target_t *triggers;
+
 
 	/* libnet sessions
 	   each attack has they reside at different layers */

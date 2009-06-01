@@ -30,7 +30,11 @@
 /* define state corruption */
 #define POISON_CORRUPT		-21
 
+/* IP address type */
 typedef uint32_t ip_addr_t;
+
+/* DHCP transaction ID */
+typedef uint32_t dhcp_xid_t;
 
 /* strategy: how to MITM this target */
 typedef uint32_t poison_strategy_t;
@@ -46,6 +50,22 @@ typedef uint32_t poison_status_t;
 #define POISON_ALL_NO_DNS    0x07
 #define POISON_DNS_REQUEST   0x08
 #define POISON_ALL           0x0f
+
+/* DHCP OP FLAGS */ 
+#define DHCP_OP_DISCOVER	0x01	
+#define DHCP_OP_OFFER		0x02
+#define DHCP_OP_REQUEST		0x03
+#define DHCP_OP_ACK			0x05
+#define DHCP_OP_RELEASE 	0x07
+
+/* DHCP Hardware Len */
+#define DHCP_HTYPE_ETH		0x01
+
+/* DHCP Hardware Len */
+#define DHCP_HLEN_ETH		0x06
+
+/* DHCP HOPS - possibly look into this in the future */
+#define DHCP_HOPS_NONE		0x0
 
 
 /* status flags */

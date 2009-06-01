@@ -30,8 +30,10 @@ int poison_init(poison_session_t *session, char *interface)
 	memset((char *)session, 0, sizeof(poison_session_t));
 	memset(libnet_err, 0, sizeof(libnet_err));
 
+	strncpy(session->interface, interface, sizeof(session->interface)-1);
+
 	/* setup libnet context for arp */	
-	session->arp_packet = libnet_init(LIBNET_LINK, interface, &session->libnet_err);
+	session->arp_packet = libnet_init(LIBNET_LINK, session->interface, &session->libnet_err);
 
 	/* verify it worked */
 	if (!session->arp_packet)
@@ -41,7 +43,7 @@ int poison_init(poison_session_t *session, char *interface)
 	}
 
 	/* setup libnet context for dhcp */
-	session->dhcp_packet = libnet_init(LIBNET_RAW4, interface, &session->libnet_err);
+	session->dhcp_packet = libnet_init(LIBNET_RAW4, session->interface, &session->libnet_err);
 
 	/* verify it worked */
 	if (!session->dhcp_packet)
@@ -51,7 +53,7 @@ int poison_init(poison_session_t *session, char *interface)
 	}
 
 	/* setup libnet context for dns */
-	session->dns_packet = libnet_init(LIBNET_RAW4, interface, &session->libnet_err);
+	session->dns_packet = libnet_init(LIBNET_RAW4, session->interface, &session->libnet_err);
 
 	/* verify it worked */
 	if (!session->dns_packet)
@@ -59,6 +61,7 @@ int poison_init(poison_session_t *session, char *interface)
 		strcpy(session->errbuf, "libnet_init for DNS failed");
 		return POISON_LIBNET_ERR;
 	}
+
 
 	/* set flag */
 	session->initialized = SESSION_INITIALIZED;	
