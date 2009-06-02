@@ -9,7 +9,7 @@
 #include <libnet.h>
 
 
-#include "libpoison.h"
+#include "poison_arp.h"
 
 /*
 	default arp function: more advanced requirements can call
