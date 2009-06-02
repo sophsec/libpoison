@@ -1,7 +1,7 @@
-#include <stdint.h>
-
 #ifndef _LIBPOISON_TYPES_H_
 #define _LIBPOISON_TYPES_H_
+
+#include <stdint.h>
 
 /* maximum error length */
 #define POISON_MAX_ERROR 1024
