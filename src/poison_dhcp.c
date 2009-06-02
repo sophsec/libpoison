@@ -39,7 +39,7 @@ int poison_dhcp_discover(poison_session_t *session, poison_discover_opts_t *opti
 	opts[optlen++] = 0x01; /* DHCP discover */
 
 	opts[optlen++] = 0x74; /* DHCP auto config */	
-	opts[optlen++] = 0x01  /* 1 byte length */
+	opts[optlen++] = 0x01; /* 1 byte length */
 	opts[optlen++] = 0x01; /* idk? */
 	
 	/* client identifier: for simplicity, this will be the client mac */
@@ -53,7 +53,7 @@ int poison_dhcp_discover(poison_session_t *session, poison_discover_opts_t *opti
 	{
 		opts[optlen++] = 0x32; /* requested IP */
 		opts[optlen++] = 0x04; /* addr len */
-		memcpy(&opts[optlen], options->clientip, 4);
+		memcpy(&opts[optlen], (char *)&options->clientip, 4);
 		optlen += 4;
 	}
 
@@ -63,25 +63,25 @@ int poison_dhcp_discover(poison_session_t *session, poison_discover_opts_t *opti
 		namelen = strlen(options->hostname);
 		opts[optlen++] = 0x0c;    /* Host name */
 		opts[optlen++] = namelen; /* length */
-		strncpy(&opts[optlen], options->hostname, namelen);
+		strncpy((char *)&opts[optlen], options->hostname, namelen);
 		optlen += namelen;
 	}
 
-	opt[optlen++] = 0x37; /* parameter request list */
-	opt[optlen++] = 0x05; /* list length */
-	opt[optlen++] = 0x01; /* subnet mask */
-	opt[optlen++] = 0x0f; /* domain name */
-	opt[optlen++] = 0x03; /* router */
-	opt[optlen++] = 0x1f; /* perform router discover */
-	opt[optlen++] = 0x21; /* static route */
+	opts[optlen++] = 0x37; /* parameter request list */
+	opts[optlen++] = 0x05; /* list length */
+	opts[optlen++] = 0x01; /* subnet mask */
+	opts[optlen++] = 0x0f; /* domain name */
+	opts[optlen++] = 0x03; /* router */
+	opts[optlen++] = 0x1f; /* perform router discover */
+	opts[optlen++] = 0x21; /* static route */
 
 	/* end options */
-	opt[optlen++] = 0xff;
+	opts[optlen++] = 0xff;
 
 	/* padding */
-	opt[optlen++] = 0x00;
-	opt[optlen++] = 0x00;
-	opt[optlen++] = 0x00;
+	opts[optlen++] = 0x00;
+	opts[optlen++] = 0x00;
+	opts[optlen++] = 0x00;
 
 	
 	/* build libnet packet */
@@ -100,7 +100,7 @@ int poison_dhcp_discover(poison_session_t *session, poison_discover_opts_t *opti
 				options->clientmac,  /* client hardware addr */
 				NULL, 				 /* server hostname */
 				NULL, 				 /* file? wtf bbq */
-				&opts,				 /* dhcp options */	
+				(u_int8_t *)&opts,	 /* dhcp options */	
 				optlen, 			 /* length of options */
 				session->dhcp_packet,/* libnet context */
 				0					 /* ptag */
@@ -108,7 +108,7 @@ int poison_dhcp_discover(poison_session_t *session, poison_discover_opts_t *opti
 
 	if (dhcp == -1)
 	{
-		strpcy(session->errbuf, "libnet_build_dhcpv4() failed\n");
+		strcpy(session->errbuf, "libnet_build_dhcpv4() failed\n");
 		return POISON_LIBNET_ERR;
 	}
 
@@ -126,22 +126,23 @@ int poison_dhcp_discover(poison_session_t *session, poison_discover_opts_t *opti
 
 	if (udp == -1)
 	{
-		strpcy(session->errbuf, "libnet_build_udp() failed\n");
+		strcpy(session->errbuf, "libnet_build_udp() failed\n");
 		return POISON_LIBNET_ERR;
 	}
 
 	ip = libnet_build_ipv4(
-				LIBNET_IPV4 + 
+				LIBNET_IPV4_H + 
 				LIBNET_UDP_H + 
 				LIBNET_DHCPV4_H +
 				optlen, 			  /* len */
 				0x10,				  /* tos */
 				0,					  /* ip id */
 				0,					  /* fragmentation */
+				16,					  /* ttl */
 				IPPROTO_UDP,		  /* upper protocol */
 				0,					  /* auto checksum */
-				0,					  /* src IP */
-				0xffffffff, 		  /* dst IP */
+				IP_ZERO_ADDR,		  /* src IP */
+				IP_BCAST_ADDR, 		  /* dst IP */
 				NULL,				  /* no payload */
 				0, 					  /* no payload len */
 				session->dhcp_packet, /* libnet context */
@@ -149,12 +150,12 @@ int poison_dhcp_discover(poison_session_t *session, poison_discover_opts_t *opti
 
 	if (ip == -1)
 	{
-		strpcy(session->errbuf, "libnet_build_ipv4() failed\n");
+		strcpy(session->errbuf, "libnet_build_ipv4() failed\n");
 		return POISON_LIBNET_ERR;
 	}
 
 	ether = libnet_build_ethernet(
-				"\xff\xff\xff\xff\xff\xff", /* dest MAC: bcast */	
+				ETHER_BCAST_ADDR,			/* dest MAC: bcast */	
 				options->clientmac,			/* source MAC */
 				ETHERTYPE_IP,				/* upper proto */
 				NULL,						/* no payload */
@@ -164,13 +165,13 @@ int poison_dhcp_discover(poison_session_t *session, poison_discover_opts_t *opti
 				
 	if (ether == -1)
 	{
-		strpcy(session->errbuf, "libnet_build_ethernet() failed\n");
+		strcpy(session->errbuf, "libnet_build_ethernet() failed\n");
 		return POISON_LIBNET_ERR;
 	}
 	
 	if (libnet_write(session->dhcp_packet) == -1)
 	{
-		strpcy(session->errbuf, "libnet_write() failed\n");
+		strcpy(session->errbuf, "libnet_write() failed\n");
 		return POISON_LIBNET_ERR;
 	}	
 
@@ -202,7 +203,7 @@ int poison_dhcp_release(poison_session_t *session, poison_release_opts_t *option
 
 	opts[optlen++] = 0x36; /* server identifier */	
 	opts[optlen++] = 0x04; /* server addr length */
-	memcpy(&opts[optlen], options->serverip, 4);
+	memcpy(&opts[optlen], (char *)&options->serverip, 4);
 	optlen += 4;
 	
 	opts[optlen++] = 0x3d;	/* client identifier */
@@ -212,12 +213,12 @@ int poison_dhcp_release(poison_session_t *session, poison_release_opts_t *option
 	optlen += 6;
 
 	/* end options */
-	opt[optlen++] = 0xff;
+	opts[optlen++] = 0xff;
 
 	/* padding */
-	opt[optlen++] = 0x00;
-	opt[optlen++] = 0x00;
-	opt[optlen++] = 0x00;
+	opts[optlen++] = 0x00;
+	opts[optlen++] = 0x00;
+	opts[optlen++] = 0x00;
 
 	
 	/* build libnet packet */
@@ -236,7 +237,7 @@ int poison_dhcp_release(poison_session_t *session, poison_release_opts_t *option
 				options->clientmac,  /* client hardware addr */
 				NULL, 				 /* server hostname */
 				NULL, 				 /* file? wtf bbq */
-				&opts,				 /* dhcp options */	
+				(u_int8_t *)&opts,	 /* dhcp options */	
 				optlen, 			 /* length of options */
 				session->dhcp_packet,/* libnet context */
 				0					 /* ptag */
@@ -244,7 +245,7 @@ int poison_dhcp_release(poison_session_t *session, poison_release_opts_t *option
 
 	if (dhcp == -1)
 	{
-		strpcy(session->errbuf, "libnet_build_dhcpv4() failed\n");
+		strcpy(session->errbuf, "libnet_build_dhcpv4() failed\n");
 		return POISON_LIBNET_ERR;
 	}
 
@@ -262,18 +263,19 @@ int poison_dhcp_release(poison_session_t *session, poison_release_opts_t *option
 
 	if (udp == -1)
 	{
-		strpcy(session->errbuf, "libnet_build_udp() failed\n");
+		strcpy(session->errbuf, "libnet_build_udp() failed\n");
 		return POISON_LIBNET_ERR;
 	}
 
 	ip = libnet_build_ipv4(
-				LIBNET_IPV4 + 
+				LIBNET_IPV4_H + 
 				LIBNET_UDP_H + 
 				LIBNET_DHCPV4_H +
 				optlen, 			  /* len */
 				0x10,				  /* tos */
 				0,					  /* ip id */
 				0,					  /* fragmentation */
+				16,					  /* ttl */
 				IPPROTO_UDP,		  /* upper protocol */
 				0,					  /* auto checksum */
 				options->clientip,	  /* src IP */
@@ -285,13 +287,13 @@ int poison_dhcp_release(poison_session_t *session, poison_release_opts_t *option
 
 	if (ip == -1)
 	{
-		strpcy(session->errbuf, "libnet_build_ipv4() failed\n");
+		strcpy(session->errbuf, "libnet_build_ipv4() failed\n");
 		return POISON_LIBNET_ERR;
 	}
 
 	ether = libnet_build_ethernet(
-				options->servermac,		/* dest MAC: server */	
-				options->clientmac,		/* source MAC */
+				(u_int8_t *)&options->servermac,/* dest MAC: server */	
+				(u_int8_t *)&options->clientmac,/* source MAC */
 				ETHERTYPE_IP,			/* upper proto */
 				NULL,					/* no payload */
 				0,						/* no payload len */
@@ -300,13 +302,13 @@ int poison_dhcp_release(poison_session_t *session, poison_release_opts_t *option
 				
 	if (ether == -1)
 	{
-		strpcy(session->errbuf, "libnet_build_ethernet() failed\n");
+		strcpy(session->errbuf, "libnet_build_ethernet() failed\n");
 		return POISON_LIBNET_ERR;
 	}
 	
 	if (libnet_write(session->dhcp_packet) == -1)
 	{
-		strpcy(session->errbuf, "libnet_write() failed\n");
+		strcpy(session->errbuf, "libnet_write() failed\n");
 		return POISON_LIBNET_ERR;
 	}	
 
@@ -339,19 +341,19 @@ int poison_dhcp_offer(poison_session_t *session, poison_offer_opts_t *options)
 
 	opts[optlen++] = 0x36; /* server identifier */	
 	opts[optlen++] = 0x04; /* server addr length */
-	memcpy(&opts[optlen], options->serverip, 4);
+	memcpy(&opts[optlen], (char *)&options->serverip, 4);
 	optlen += 4;
 	
 	opts[optlen++] = 0x33;	/* lease time */
 	opts[optlen++] = 0x04;	/* value len  */
-	memcpy(&opts[optlen], options->leasetime, 4);
+	memcpy(&opts[optlen], (char *)&options->leasetime, 4);
 	optlen += 4;
 
 	if (options->netmask != 0)
 	{
 		opts[optlen++] = 0x01; /* netmask */
 		opts[optlen++] = 0x04; /* value len */
-		memcpy(&opts[optlen], options->netmask, 4);
+		memcpy(&opts[optlen], (char *)&options->netmask, 4);
 		optlen += 4;
 	}
 
@@ -369,7 +371,7 @@ int poison_dhcp_offer(poison_session_t *session, poison_offer_opts_t *options)
 	{
 		opts[optlen++] = 0x03; /* router IP */
 		opts[optlen++] = 0x04; /* value len */
-		memcpy(opts->optlen, options->routerip, 4);
+		memcpy(&opts[optlen], (char *)&options->routerip, 4);
 		optlen += 4;
 	}
 
@@ -377,17 +379,17 @@ int poison_dhcp_offer(poison_session_t *session, poison_offer_opts_t *options)
 	{
 		opts[optlen++] = 0x06; /* dns IP */
 		opts[optlen++] = 0x04; /* value len */
-		memcpy(opts->optlen, options->dns, 4);
+		memcpy(&opts[optlen], (char *)&options->dns, 4);
 		optlen += 4;
 	}
 
 	/* end options */
-	opt[optlen++] = 0xff;
+	opts[optlen++] = 0xff;
 
 	/* padding */
-	opt[optlen++] = 0x00;
-	opt[optlen++] = 0x00;
-	opt[optlen++] = 0x00;
+	opts[optlen++] = 0x00;
+	opts[optlen++] = 0x00;
+	opts[optlen++] = 0x00;
 
 	/* build libnet packet */
 	dhcp = libnet_build_dhcpv4(
@@ -407,7 +409,7 @@ int poison_dhcp_offer(poison_session_t *session, poison_offer_opts_t *options)
 				options->clientmac,  /* client hardware addr */
 				NULL, 				 /* server hostname */
 				NULL, 				 /* file? wtf bbq */
-				&opts,				 /* dhcp options */	
+				(u_int8_t *)&opts,	 /* dhcp options */	
 				optlen, 			 /* length of options */
 				session->dhcp_packet,/* libnet context */
 				0					 /* ptag */
@@ -415,7 +417,7 @@ int poison_dhcp_offer(poison_session_t *session, poison_offer_opts_t *options)
 
 	if (dhcp == -1)
 	{
-		strpcy(session->errbuf, "libnet_build_dhcpv4() failed\n");
+		strcpy(session->errbuf, "libnet_build_dhcpv4() failed\n");
 		return POISON_LIBNET_ERR;
 	}
 
@@ -433,18 +435,19 @@ int poison_dhcp_offer(poison_session_t *session, poison_offer_opts_t *options)
 
 	if (udp == -1)
 	{
-		strpcy(session->errbuf, "libnet_build_udp() failed\n");
+		strcpy(session->errbuf, "libnet_build_udp() failed\n");
 		return POISON_LIBNET_ERR;
 	}
 
 	ip = libnet_build_ipv4(
-				LIBNET_IPV4 + 
+				LIBNET_IPV4_H + 
 				LIBNET_UDP_H + 
 				LIBNET_DHCPV4_H +
 				optlen, 			  /* len */
 				0x10,				  /* tos */
 				0,					  /* ip id */
 				0,					  /* fragmentation */
+				16,					  /* ttl */
 				IPPROTO_UDP,		  /* upper protocol */
 				0,					  /* auto checksum */
 				options->serverip,	  /* src IP */
@@ -456,7 +459,7 @@ int poison_dhcp_offer(poison_session_t *session, poison_offer_opts_t *options)
 
 	if (ip == -1)
 	{
-		strpcy(session->errbuf, "libnet_build_ipv4() failed\n");
+		strcpy(session->errbuf, "libnet_build_ipv4() failed\n");
 		return POISON_LIBNET_ERR;
 	}
 
@@ -471,13 +474,13 @@ int poison_dhcp_offer(poison_session_t *session, poison_offer_opts_t *options)
 				
 	if (ether == -1)
 	{
-		strpcy(session->errbuf, "libnet_build_ethernet() failed\n");
+		strcpy(session->errbuf, "libnet_build_ethernet() failed\n");
 		return POISON_LIBNET_ERR;
 	}
 	
 	if (libnet_write(session->dhcp_packet) == -1)
 	{
-		strpcy(session->errbuf, "libnet_write() failed\n");
+		strcpy(session->errbuf, "libnet_write() failed\n");
 		return POISON_LIBNET_ERR;
 	}	
 
@@ -518,14 +521,14 @@ int poison_dhcp_request(poison_session_t *session, poison_request_opts_t *option
 	/* Requested IP */
 	opts[optlen++] = 0x30; 
 	opts[optlen++] = 0x04; /* value len */
-	memcpy(&opts[optlen], clientip, 4);
+	memcpy(&opts[optlen], (char *)&options->clientip, 4);
 	optlen += 4;
 
 	if (options->serverip != 0)
 	{
 		opts[optlen++] = 0x36;
 		opts[optlen++] = 0x04;
-		memcpy(&opts[optlen], options->serverip, 4);
+		memcpy(&opts[optlen], (char *)&options->serverip, 4);
 		optlen += 4;
 	}
 
@@ -535,7 +538,7 @@ int poison_dhcp_request(poison_session_t *session, poison_request_opts_t *option
 		namelen = strlen(options->hostname);
 		opts[optlen++] = 0x0c;    /* Host name */
 		opts[optlen++] = namelen; /* length */
-		strncpy(&opts[optlen], options->hostname, namelen);
+		strncpy((char *)&opts[optlen], options->hostname, namelen);
 		optlen += namelen;
 	}
 
@@ -549,27 +552,27 @@ int poison_dhcp_request(poison_session_t *session, poison_request_opts_t *option
 		opts[optlen++] = 0x0;	  /* flags */
 		opts[optlen++] = 0x0;	  /* A-PR */
 		opts[optlen++] = 0x0;     /* PTR-PR */
-		strncpy(&opts[optlen], options->fqdn, domainlen);
+		strncpy((char *)&opts[optlen], options->fqdn, domainlen);
 		optlen += domainlen;
 	}
 
 
-	opt[optlen++] = 0x37; /* parameter request list */
-	opt[optlen++] = 0x05; /* list length */
-	opt[optlen++] = 0x01; /* subnet mask */
-	opt[optlen++] = 0x0f; /* domain name */
-	opt[optlen++] = 0x03; /* router */
-	opt[optlen++] = 0x1f; /* perform router discover */
-	opt[optlen++] = 0x21; /* static route */
+	opts[optlen++] = 0x37; /* parameter request list */
+	opts[optlen++] = 0x05; /* list length */
+	opts[optlen++] = 0x01; /* subnet mask */
+	opts[optlen++] = 0x0f; /* domain name */
+	opts[optlen++] = 0x03; /* router */
+	opts[optlen++] = 0x1f; /* perform router discover */
+	opts[optlen++] = 0x21; /* static route */
 
 
 	/* end options */
-	opt[optlen++] = 0xff;
+	opts[optlen++] = 0xff;
 
 	/* padding */
-	opt[optlen++] = 0x00;
-	opt[optlen++] = 0x00;
-	opt[optlen++] = 0x00;
+	opts[optlen++] = 0x00;
+	opts[optlen++] = 0x00;
+	opts[optlen++] = 0x00;
 
 	/* build libnet packet */
 	dhcp = libnet_build_dhcpv4(
@@ -587,7 +590,7 @@ int poison_dhcp_request(poison_session_t *session, poison_request_opts_t *option
 				options->clientmac,  /* client hardware addr */
 				NULL, 				 /* server hostname */
 				NULL, 				 /* file? wtf bbq */
-				&opts,				 /* dhcp options */	
+				(u_int8_t*)&opts,	 /* dhcp options */	
 				optlen, 			 /* length of options */
 				session->dhcp_packet,/* libnet context */
 				0					 /* ptag */
@@ -595,7 +598,7 @@ int poison_dhcp_request(poison_session_t *session, poison_request_opts_t *option
 
 	if (dhcp == -1)
 	{
-		strpcy(session->errbuf, "libnet_build_dhcpv4() failed\n");
+		strcpy(session->errbuf, "libnet_build_dhcpv4() failed\n");
 		return POISON_LIBNET_ERR;
 	}
 
@@ -613,22 +616,23 @@ int poison_dhcp_request(poison_session_t *session, poison_request_opts_t *option
 
 	if (udp == -1)
 	{
-		strpcy(session->errbuf, "libnet_build_udp() failed\n");
+		strcpy(session->errbuf, "libnet_build_udp() failed\n");
 		return POISON_LIBNET_ERR;
 	}
 
 	ip = libnet_build_ipv4(
-				LIBNET_IPV4 + 
+				LIBNET_IPV4_H + 
 				LIBNET_UDP_H + 
 				LIBNET_DHCPV4_H +
 				optlen, 			  /* len */
 				0x10,				  /* tos */
 				0,					  /* ip id */
 				0,					  /* fragmentation */
+				16,					  /* ttl */
 				IPPROTO_UDP,		  /* upper protocol */
 				0,					  /* auto checksum */
 				0,					  /* src IP */
-				0xffffffff,			  /* dst IP */
+				IP_BCAST_ADDR,		  /* dst IP */
 				NULL,				  /* no payload */
 				0, 					  /* no payload len */
 				session->dhcp_packet, /* libnet context */
@@ -636,13 +640,13 @@ int poison_dhcp_request(poison_session_t *session, poison_request_opts_t *option
 
 	if (ip == -1)
 	{
-		strpcy(session->errbuf, "libnet_build_ipv4() failed\n");
+		strcpy(session->errbuf, "libnet_build_ipv4() failed\n");
 		return POISON_LIBNET_ERR;
 	}
 
 	ether = libnet_build_ethernet(
-				"\xff\xff\xff\xff\xff\xff",	/* dest MAC: bcast */	
-				options->clientmac,			/* source MAC */
+				ETHER_BCAST_ADDR,		/* dest MAC: bcast */	
+				options->clientmac,		/* source MAC */
 				ETHERTYPE_IP,			/* upper proto */
 				NULL,					/* no payload */
 				0,						/* no payload len */
@@ -651,13 +655,13 @@ int poison_dhcp_request(poison_session_t *session, poison_request_opts_t *option
 				
 	if (ether == -1)
 	{
-		strpcy(session->errbuf, "libnet_build_ethernet() failed\n");
+		strcpy(session->errbuf, "libnet_build_ethernet() failed\n");
 		return POISON_LIBNET_ERR;
 	}
 	
 	if (libnet_write(session->dhcp_packet) == -1)
 	{
-		strpcy(session->errbuf, "libnet_write() failed\n");
+		strcpy(session->errbuf, "libnet_write() failed\n");
 		return POISON_LIBNET_ERR;
 	}	
 
@@ -691,19 +695,19 @@ int poison_dhcp_ack(poison_session_t *session, poison_ack_opts_t *options)
 
 	opts[optlen++] = 0x36; /* server identifier */	
 	opts[optlen++] = 0x04; /* server addr length */
-	memcpy(&opts[optlen], options->serverip, 4);
+	memcpy(&opts[optlen], (char *)&options->serverip, 4);
 	optlen += 4;
 	
 	opts[optlen++] = 0x33;	/* lease time */
 	opts[optlen++] = 0x04;	/* value len  */
-	memcpy(&opts[optlen], options->leasetime, 4);
+	memcpy(&opts[optlen], (char *)&options->leasetime, 4);
 	optlen += 4;
 
 	if (options->netmask != 0)
 	{
 		opts[optlen++] = 0x01; /* netmask */
 		opts[optlen++] = 0x04; /* value len */
-		memcpy(&opts[optlen], options->netmask, 4);
+		memcpy(&opts[optlen], (char *)&options->netmask, 4);
 		optlen += 4;
 	}
 
@@ -721,7 +725,7 @@ int poison_dhcp_ack(poison_session_t *session, poison_ack_opts_t *options)
 	{
 		opts[optlen++] = 0x03; /* router IP */
 		opts[optlen++] = 0x04; /* value len */
-		memcpy(opts->optlen, options->routerip, 4);
+		memcpy(&opts[optlen], (char *)&options->routerip, 4);
 		optlen += 4;
 	}
 
@@ -729,17 +733,17 @@ int poison_dhcp_ack(poison_session_t *session, poison_ack_opts_t *options)
 	{
 		opts[optlen++] = 0x06; /* dns IP */
 		opts[optlen++] = 0x04; /* value len */
-		memcpy(opts->optlen, options->dns, 4);
+		memcpy(&opts[optlen], (char *)&options->dns, 4);
 		optlen += 4;
 	}
 
 	/* end options */
-	opt[optlen++] = 0xff;
+	opts[optlen++] = 0xff;
 
 	/* padding */
-	opt[optlen++] = 0x00;
-	opt[optlen++] = 0x00;
-	opt[optlen++] = 0x00;
+	opts[optlen++] = 0x00;
+	opts[optlen++] = 0x00;
+	opts[optlen++] = 0x00;
 
 	/* build libnet packet */
 	dhcp = libnet_build_dhcpv4(
@@ -759,7 +763,7 @@ int poison_dhcp_ack(poison_session_t *session, poison_ack_opts_t *options)
 				options->clientmac,  /* client hardware addr */
 				NULL, 				 /* server hostname */
 				NULL, 				 /* file? wtf bbq */
-				&opts,				 /* dhcp options */	
+				(u_int8_t *)&opts,	 /* dhcp options */	
 				optlen, 			 /* length of options */
 				session->dhcp_packet,/* libnet context */
 				0					 /* ptag */
@@ -767,7 +771,7 @@ int poison_dhcp_ack(poison_session_t *session, poison_ack_opts_t *options)
 
 	if (dhcp == -1)
 	{
-		strpcy(session->errbuf, "libnet_build_dhcpv4() failed\n");
+		strcpy(session->errbuf, "libnet_build_dhcpv4() failed\n");
 		return POISON_LIBNET_ERR;
 	}
 
@@ -785,18 +789,19 @@ int poison_dhcp_ack(poison_session_t *session, poison_ack_opts_t *options)
 
 	if (udp == -1)
 	{
-		strpcy(session->errbuf, "libnet_build_udp() failed\n");
+		strcpy(session->errbuf, "libnet_build_udp() failed\n");
 		return POISON_LIBNET_ERR;
 	}
 
 	ip = libnet_build_ipv4(
-				LIBNET_IPV4 + 
+				LIBNET_IPV4_H + 
 				LIBNET_UDP_H + 
 				LIBNET_DHCPV4_H +
 				optlen, 			  /* len */
 				0x10,				  /* tos */
 				0,					  /* ip id */
 				0,					  /* fragmentation */
+				16,					  /* ttl */
 				IPPROTO_UDP,		  /* upper protocol */
 				0,					  /* auto checksum */
 				options->serverip,	  /* src IP */
@@ -808,7 +813,7 @@ int poison_dhcp_ack(poison_session_t *session, poison_ack_opts_t *options)
 
 	if (ip == -1)
 	{
-		strpcy(session->errbuf, "libnet_build_ipv4() failed\n");
+		strcpy(session->errbuf, "libnet_build_ipv4() failed\n");
 		return POISON_LIBNET_ERR;
 	}
 
@@ -823,13 +828,13 @@ int poison_dhcp_ack(poison_session_t *session, poison_ack_opts_t *options)
 				
 	if (ether == -1)
 	{
-		strpcy(session->errbuf, "libnet_build_ethernet() failed\n");
+		strcpy(session->errbuf, "libnet_build_ethernet() failed\n");
 		return POISON_LIBNET_ERR;
 	}
 	
 	if (libnet_write(session->dhcp_packet) == -1)
 	{
-		strpcy(session->errbuf, "libnet_write() failed\n");
+		strcpy(session->errbuf, "libnet_write() failed\n");
 		return POISON_LIBNET_ERR;
 	}	
 

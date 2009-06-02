@@ -108,6 +108,7 @@ typedef struct
 
 typedef struct 
 {
+	dhcp_xid_t txid;
 	ip_addr_t clientip;
 	ip_addr_t serverip;
 	

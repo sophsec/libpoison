@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 #ifndef _LIBPOISON_TYPES_H_
 #define _LIBPOISON_TYPES_H_
 
@@ -42,6 +44,14 @@ typedef uint32_t poison_strategy_t;
 /* this is the status flag type: what strategies have we used? */
 typedef uint32_t poison_status_t;
 
+/* define broadcast addresses */
+#define IP_BCAST_ADDR (unsigned int )0xffffffff
+#define IP_ZERO_ADDR  (unsigned int )0x00000000
+#define ETHER_BCAST_ADDR (unsigned char *)"\xff\xff\xff\xff\xff\xff"
+#define ETHER_ZERO_ADDR (unsigned char *)"\x00\x00\x00\x00\x00\x00"
+
+
+
 /* strategy flags */
 #define POISON_DHCP_REQUEST  0x01
 #define POISON_DHCP_DISCOVER 0x02
@@ -79,7 +89,7 @@ typedef struct
 {
 	ip_addr_t ip_addr;
 	unsigned char mac_addr[6];
-	poison_state_t *next;
+	struct poison_state_t *next;
 
 } poison_state_t;
 

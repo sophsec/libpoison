@@ -20,7 +20,7 @@ struct poison_target
 
 	/* cross links to attacks associated with this target */
 	/* dhcp options for this target */	
-	poison_dhcp_options_t *dhcp;
+	//poison_dhcp_options_t *dhcp;
 
 	/* next target in the list */
 	poison_target_t *next;
