@@ -5,6 +5,7 @@
 
 #include "poison_types.h"
 #include "poison_target.h"
+#include "poison_route.h"
 
 /* libpoison session: this is the highest data type
    used for intialization and clean up */
@@ -32,6 +33,9 @@ typedef struct
 	libnet_t *dhcp_packet;
 	libnet_t *arp_packet;
 	libnet_t *dns_packet;
+
+	/* routing table info */
+	poison_route_t *route;
 
 } poison_session_t;
 

@@ -104,6 +104,7 @@ void poison_shutdown(poison_session_t *session)
 		return;
 	}
 
+#if 0
 	/* free targets_all list */
 	if (session->targets_all)
 	{
@@ -121,6 +122,7 @@ void poison_shutdown(poison_session_t *session)
 	{
 		poison_free_dhcp(poison->dhcp);
 	}
+#endif
 
 	/* close libnet dhcp packet */
 	if (poison->dhcp_packet)

@@ -36,7 +36,6 @@ int poison_get_route(poison_session_t *session)
 	   this line should be at least 70 bytes! */
 	/* FIXME: will the order ever change? this assumes static order! */
 
-	
 }
 
 /* route node allocation: returns new initialized (to 0) node or NULL on fail */

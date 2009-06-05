@@ -14,6 +14,9 @@
 /* everything is OK */
 #define POISON_OK			0
 
+/* file io error or permission denied */
+#define POISON_ERROR		-1
+
 /* NULL session was passed to function */
 #define POISON_SESSION_NULL -2
 
