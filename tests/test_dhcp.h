@@ -3,7 +3,7 @@
 
 int test_suite_dhcp();
 int test_dhcp_init();
-void test_dhcp_check_init();
+void test_dhcp_discover();
 int test_dhcp_cleanup();
 
 #endif

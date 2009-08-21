@@ -18,10 +18,16 @@ int test_suite_dhcp()
 		return -1;
 	}
 
+	if (CU_add_test(suite, "test poison_dhcp_discover", test_dhcp_discover) == NULL)
+	{
+		return -1;
+	}
+
 	return 0;
 }
 
 static poison_session_t session;
+static poison_discover_opts_t disc;
 
 int test_dhcp_init()
 {
@@ -41,6 +47,20 @@ int test_dhcp_init()
 	}
 
 	return 0;
+}
+
+void test_dhcp_discover()
+{
+	disc.txid = 0x01020304;
+	memcpy((char *)&disc.clientmac, "\x00\x10\x22\x4b\x1c\x00", 6);
+
+	if (poison_dhcp_discover(&session, &disc) != POISON_OK)
+	{
+		fprintf(stderr, "libpoison: %s\n", session.errbuf);
+		fprintf(stderr, "libnet: %s\n", session.libnet_err);
+
+		CU_FAIL("dhcp discover failed!");
+	}
 }
 
 int test_dhcp_cleanup()
