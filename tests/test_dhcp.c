@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <libpoison.h>
+#include <poison_init.h>
 #include <CUnit/Basic.h>
 
 #include "test_dhcp.h"
