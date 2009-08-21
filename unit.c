@@ -14,7 +14,7 @@
 int main(int argc, char *argv[])
 {
 	poison_session_t session;
-	char device[]="eth1";
+	char device[]="lo";
 	int ret;
 
 	poison_discover_opts_t disc;
@@ -27,6 +27,10 @@ int main(int argc, char *argv[])
 	if (ret != POISON_OK)
 	{
 		printf("initialization failed: %s\n", session.errbuf);
+		if (ret == POISON_LIBNET_ERR)
+		{
+			printf("Libnet error:%s\n", session.libnet_err);
+		}
 		exit(0);
 	}
 
