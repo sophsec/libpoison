@@ -30,7 +30,11 @@ static poison_session_t session;
 
 int test_session_init()
 {
-	if (poison_init(&session, &test_device) != POISON_OK)
+	int ret;
+	
+	ret = poison_init(&session, &test_device);
+	
+	if (ret != POISON_OK)
 	{
 		fprintf(stderr, "initialization failed: %s\n", session.errbuf);
 
