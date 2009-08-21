@@ -42,5 +42,5 @@ install: libpoison.so $(HEADERS)
 #	for $$i in $(HEADERS) do; cp $$i $(INCLUDE_DIR)/libpoison/; done
 	cp src/*.h $(INCLUDE_DIR)/libpoison/
 
-test:
+test: libpoison.so
 	make -C tests
