@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "libpoison.h"
+#include "poison_init.h"
 
 /* intialize the session: returns negative on failure, 
    sets errbuf in session, unless session is NULL, in which case
@@ -28,12 +29,11 @@ int poison_init(poison_session_t *session, char *interface)
 	
 	/* Clean all memory! */
 	memset((char *)session, 0, sizeof(poison_session_t));
-	memset(libnet_err, 0, sizeof(libnet_err));
 
 	strncpy(session->interface, interface, sizeof(session->interface)-1);
 
 	/* setup libnet context for arp */	
-	session->arp_packet = libnet_init(LIBNET_LINK, session->interface, &session->libnet_err);
+	session->arp_packet = libnet_init(LIBNET_LINK, session->interface, session->libnet_err);
 
 	/* verify it worked */
 	if (!session->arp_packet)
@@ -43,7 +43,7 @@ int poison_init(poison_session_t *session, char *interface)
 	}
 
 	/* setup libnet context for dhcp */
-	session->dhcp_packet = libnet_init(LIBNET_RAW4, session->interface, &session->libnet_err);
+	session->dhcp_packet = libnet_init(LIBNET_LINK, session->interface, session->libnet_err);
 
 	/* verify it worked */
 	if (!session->dhcp_packet)
@@ -53,7 +53,7 @@ int poison_init(poison_session_t *session, char *interface)
 	}
 
 	/* setup libnet context for dns */
-	session->dns_packet = libnet_init(LIBNET_RAW4, session->interface, &session->libnet_err);
+	session->dns_packet = libnet_init(LIBNET_RAW4, session->interface, session->libnet_err);
 
 	/* verify it worked */
 	if (!session->dns_packet)
@@ -99,7 +99,7 @@ void poison_shutdown(poison_session_t *session)
 	}
 
 	/* if session is not initialized, fail */
-	if (SESSION_INITILIAZED != session->initialized)
+	if (SESSION_INITIALIZED != session->initialized)
 	{
 		return;
 	}
@@ -125,21 +125,21 @@ void poison_shutdown(poison_session_t *session)
 #endif
 
 	/* close libnet dhcp packet */
-	if (poison->dhcp_packet)
+	if (session->dhcp_packet)
 	{
-		libnet_destroy(poison->dhcp_packet);
+		libnet_destroy(session->dhcp_packet);
 	}
 
 	/* close libnet arp packet */
-	if (poison->arp_packet)
+	if (session->arp_packet)
 	{
-		libnet_destroy(poison->arp_packet);
+		libnet_destroy(session->arp_packet);
 	}
 
 	/* close libnet dns packet */
-	if (poison->dns_packet)
+	if (session->dns_packet)
 	{
-		libnet_destroy(poison->dns_packet);
+		libnet_destroy(session->dns_packet);
 	}
 
 	return;

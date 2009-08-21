@@ -109,6 +109,8 @@ int poison_dhcp_discover(poison_session_t *session, poison_discover_opts_t *opti
 	if (dhcp == -1)
 	{
 		strcpy(session->errbuf, "libnet_build_dhcpv4() failed\n");
+		strncpy(session->libnet_err, 
+			libnet_geterror(session->dhcp_packet), sizeof(session->libnet_err)-1);
 		return POISON_LIBNET_ERR;
 	}
 
@@ -127,6 +129,8 @@ int poison_dhcp_discover(poison_session_t *session, poison_discover_opts_t *opti
 	if (udp == -1)
 	{
 		strcpy(session->errbuf, "libnet_build_udp() failed\n");
+		strncpy(session->libnet_err, 
+			libnet_geterror(session->dhcp_packet), sizeof(session->libnet_err)-1);
 		return POISON_LIBNET_ERR;
 	}
 
@@ -151,6 +155,8 @@ int poison_dhcp_discover(poison_session_t *session, poison_discover_opts_t *opti
 	if (ip == -1)
 	{
 		strcpy(session->errbuf, "libnet_build_ipv4() failed\n");
+		strncpy(session->libnet_err, 
+			libnet_geterror(session->dhcp_packet), sizeof(session->libnet_err)-1);
 		return POISON_LIBNET_ERR;
 	}
 
@@ -166,12 +172,16 @@ int poison_dhcp_discover(poison_session_t *session, poison_discover_opts_t *opti
 	if (ether == -1)
 	{
 		strcpy(session->errbuf, "libnet_build_ethernet() failed\n");
+		strncpy(session->libnet_err, 
+			libnet_geterror(session->dhcp_packet), sizeof(session->libnet_err)-1);
 		return POISON_LIBNET_ERR;
 	}
 	
 	if (libnet_write(session->dhcp_packet) == -1)
 	{
 		strcpy(session->errbuf, "libnet_write() failed\n");
+		strncpy(session->libnet_err, 
+			libnet_geterror(session->dhcp_packet), sizeof(session->libnet_err)-1);
 		return POISON_LIBNET_ERR;
 	}	
 
@@ -246,6 +256,8 @@ int poison_dhcp_release(poison_session_t *session, poison_release_opts_t *option
 	if (dhcp == -1)
 	{
 		strcpy(session->errbuf, "libnet_build_dhcpv4() failed\n");
+		strncpy(session->libnet_err, 
+			libnet_geterror(session->dhcp_packet), sizeof(session->libnet_err)-1);
 		return POISON_LIBNET_ERR;
 	}
 
@@ -264,6 +276,8 @@ int poison_dhcp_release(poison_session_t *session, poison_release_opts_t *option
 	if (udp == -1)
 	{
 		strcpy(session->errbuf, "libnet_build_udp() failed\n");
+		strncpy(session->libnet_err, 
+			libnet_geterror(session->dhcp_packet), sizeof(session->libnet_err)-1);
 		return POISON_LIBNET_ERR;
 	}
 
@@ -288,6 +302,8 @@ int poison_dhcp_release(poison_session_t *session, poison_release_opts_t *option
 	if (ip == -1)
 	{
 		strcpy(session->errbuf, "libnet_build_ipv4() failed\n");
+		strncpy(session->libnet_err, 
+			libnet_geterror(session->dhcp_packet), sizeof(session->libnet_err)-1);
 		return POISON_LIBNET_ERR;
 	}
 
@@ -303,12 +319,16 @@ int poison_dhcp_release(poison_session_t *session, poison_release_opts_t *option
 	if (ether == -1)
 	{
 		strcpy(session->errbuf, "libnet_build_ethernet() failed\n");
+		strncpy(session->libnet_err, 
+			libnet_geterror(session->dhcp_packet), sizeof(session->libnet_err)-1);
 		return POISON_LIBNET_ERR;
 	}
 	
 	if (libnet_write(session->dhcp_packet) == -1)
 	{
 		strcpy(session->errbuf, "libnet_write() failed\n");
+		strncpy(session->libnet_err, 
+			libnet_geterror(session->dhcp_packet), sizeof(session->libnet_err)-1);
 		return POISON_LIBNET_ERR;
 	}	
 
@@ -418,6 +438,8 @@ int poison_dhcp_offer(poison_session_t *session, poison_offer_opts_t *options)
 	if (dhcp == -1)
 	{
 		strcpy(session->errbuf, "libnet_build_dhcpv4() failed\n");
+		strncpy(session->libnet_err, 
+			libnet_geterror(session->dhcp_packet), sizeof(session->libnet_err)-1);
 		return POISON_LIBNET_ERR;
 	}
 
@@ -436,6 +458,8 @@ int poison_dhcp_offer(poison_session_t *session, poison_offer_opts_t *options)
 	if (udp == -1)
 	{
 		strcpy(session->errbuf, "libnet_build_udp() failed\n");
+		strncpy(session->libnet_err, 
+			libnet_geterror(session->dhcp_packet), sizeof(session->libnet_err)-1);
 		return POISON_LIBNET_ERR;
 	}
 
@@ -460,6 +484,8 @@ int poison_dhcp_offer(poison_session_t *session, poison_offer_opts_t *options)
 	if (ip == -1)
 	{
 		strcpy(session->errbuf, "libnet_build_ipv4() failed\n");
+		strncpy(session->libnet_err, 
+			libnet_geterror(session->dhcp_packet), sizeof(session->libnet_err)-1);
 		return POISON_LIBNET_ERR;
 	}
 
@@ -475,12 +501,16 @@ int poison_dhcp_offer(poison_session_t *session, poison_offer_opts_t *options)
 	if (ether == -1)
 	{
 		strcpy(session->errbuf, "libnet_build_ethernet() failed\n");
+		strncpy(session->libnet_err, 
+			libnet_geterror(session->dhcp_packet), sizeof(session->libnet_err)-1);
 		return POISON_LIBNET_ERR;
 	}
 	
 	if (libnet_write(session->dhcp_packet) == -1)
 	{
 		strcpy(session->errbuf, "libnet_write() failed\n");
+		strncpy(session->libnet_err, 
+			libnet_geterror(session->dhcp_packet), sizeof(session->libnet_err)-1);
 		return POISON_LIBNET_ERR;
 	}	
 
@@ -599,6 +629,8 @@ int poison_dhcp_request(poison_session_t *session, poison_request_opts_t *option
 	if (dhcp == -1)
 	{
 		strcpy(session->errbuf, "libnet_build_dhcpv4() failed\n");
+		strncpy(session->libnet_err, 
+			libnet_geterror(session->dhcp_packet), sizeof(session->libnet_err)-1);
 		return POISON_LIBNET_ERR;
 	}
 
@@ -617,6 +649,8 @@ int poison_dhcp_request(poison_session_t *session, poison_request_opts_t *option
 	if (udp == -1)
 	{
 		strcpy(session->errbuf, "libnet_build_udp() failed\n");
+		strncpy(session->libnet_err, 
+			libnet_geterror(session->dhcp_packet), sizeof(session->libnet_err)-1);
 		return POISON_LIBNET_ERR;
 	}
 
@@ -641,6 +675,8 @@ int poison_dhcp_request(poison_session_t *session, poison_request_opts_t *option
 	if (ip == -1)
 	{
 		strcpy(session->errbuf, "libnet_build_ipv4() failed\n");
+		strncpy(session->libnet_err, 
+			libnet_geterror(session->dhcp_packet), sizeof(session->libnet_err)-1);
 		return POISON_LIBNET_ERR;
 	}
 
@@ -656,12 +692,16 @@ int poison_dhcp_request(poison_session_t *session, poison_request_opts_t *option
 	if (ether == -1)
 	{
 		strcpy(session->errbuf, "libnet_build_ethernet() failed\n");
+		strncpy(session->libnet_err, 
+			libnet_geterror(session->dhcp_packet), sizeof(session->libnet_err)-1);
 		return POISON_LIBNET_ERR;
 	}
 	
 	if (libnet_write(session->dhcp_packet) == -1)
 	{
 		strcpy(session->errbuf, "libnet_write() failed\n");
+		strncpy(session->libnet_err, 
+			libnet_geterror(session->dhcp_packet), sizeof(session->libnet_err)-1);
 		return POISON_LIBNET_ERR;
 	}	
 
@@ -772,6 +812,8 @@ int poison_dhcp_ack(poison_session_t *session, poison_ack_opts_t *options)
 	if (dhcp == -1)
 	{
 		strcpy(session->errbuf, "libnet_build_dhcpv4() failed\n");
+		strncpy(session->libnet_err, 
+			libnet_geterror(session->dhcp_packet), sizeof(session->libnet_err)-1);
 		return POISON_LIBNET_ERR;
 	}
 
@@ -790,6 +832,8 @@ int poison_dhcp_ack(poison_session_t *session, poison_ack_opts_t *options)
 	if (udp == -1)
 	{
 		strcpy(session->errbuf, "libnet_build_udp() failed\n");
+		strncpy(session->libnet_err, 
+			libnet_geterror(session->dhcp_packet), sizeof(session->libnet_err)-1);
 		return POISON_LIBNET_ERR;
 	}
 
@@ -814,6 +858,8 @@ int poison_dhcp_ack(poison_session_t *session, poison_ack_opts_t *options)
 	if (ip == -1)
 	{
 		strcpy(session->errbuf, "libnet_build_ipv4() failed\n");
+		strncpy(session->libnet_err, 
+			libnet_geterror(session->dhcp_packet), sizeof(session->libnet_err)-1);
 		return POISON_LIBNET_ERR;
 	}
 
@@ -829,12 +875,16 @@ int poison_dhcp_ack(poison_session_t *session, poison_ack_opts_t *options)
 	if (ether == -1)
 	{
 		strcpy(session->errbuf, "libnet_build_ethernet() failed\n");
+		strncpy(session->libnet_err, 
+			libnet_geterror(session->dhcp_packet), sizeof(session->libnet_err)-1);
 		return POISON_LIBNET_ERR;
 	}
 	
 	if (libnet_write(session->dhcp_packet) == -1)
 	{
 		strcpy(session->errbuf, "libnet_write() failed\n");
+		strncpy(session->libnet_err, 
+			libnet_geterror(session->dhcp_packet), sizeof(session->libnet_err)-1);
 		return POISON_LIBNET_ERR;
 	}	
 

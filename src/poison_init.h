@@ -1,0 +1,6 @@
+#ifndef _LIBPOISON_INIT_H_
+#define _LIBPOISON_INIT_H_
+
+#define SESSION_INITIALIZED 77
+
+#endif

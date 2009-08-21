@@ -1,3 +1,15 @@
 == TODO
 
+Unit test:
+	- loading base libpoison type (init)
+	- building/sending ARP
+	- building/sending DHCP
+	- de-init
+
+Next code iteration:
+	- Add in host listing via ARP sweep
+
+	- Add in step one of DHCP triggers
+		* lol just detect a dhcp packet was sent
+		* record that data in a structure
 
