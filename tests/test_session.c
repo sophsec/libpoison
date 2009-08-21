@@ -32,7 +32,6 @@ int test_session_init()
 {
 	int ret;
 	
-	memset((char *)&session, 0, sizeof(session));
 	ret = poison_init(&session, test_device);
 	
 	if (ret != POISON_OK)
