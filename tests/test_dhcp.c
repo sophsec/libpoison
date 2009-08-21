@@ -25,9 +25,18 @@ static poison_session_t session;
 
 int test_dhcp_init()
 {
-	if (poison_init(&session, &test_device) != POISON_OK)
+	int ret;
+
+	ret = poison_init(&session, &test_device);
+	
+	if (ret != POISON_OK)
 	{
 		fprintf(stderr, "initialization failed: %s\n", session.errbuf);
+
+		if (ret == POISON_LIBNET_ERR)
+		{
+			fprintf(stderr, "Libnet error:%s\n", session.libnet_err);
+		}
 		return -1;
 	}
 
