@@ -25,8 +25,6 @@ static poison_session_t session;
 
 int test_dhcp_init()
 {
-	int ret;
-
 	if (poison_init(&session, &test_device) != POISON_OK)
 	{
 		fprintf(stderr, "initialization failed: %s\n", session.errbuf);
