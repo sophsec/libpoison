@@ -32,7 +32,7 @@ int test_session_init()
 {
 	int ret;
 	
-	ret = poison_init(&session, &test_device);
+	ret = poison_init(&session, test_device);
 	
 	if (ret != POISON_OK)
 	{

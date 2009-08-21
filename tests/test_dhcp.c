@@ -27,7 +27,7 @@ int test_dhcp_init()
 {
 	int ret;
 
-	ret = poison_init(&session, &test_device);
+	ret = poison_init(&session, test_device);
 	
 	if (ret != POISON_OK)
 	{
