@@ -33,6 +33,11 @@ int test_session_init()
 	if (poison_init(&session, &test_device) != POISON_OK)
 	{
 		fprintf(stderr, "initialization failed: %s\n", session.errbuf);
+
+		if (ret == POISON_LIBNET_ERR)
+		{
+			fprintf(stderr, "Libnet error:%s\n", session.libnet_err);
+		}
 		return -1;
 	}
 
