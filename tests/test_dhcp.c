@@ -7,6 +7,7 @@
 #include <CUnit/Basic.h>
 
 #include "test_dhcp.h"
+#include "test_config.h"
 
 int test_suite_dhcp()
 {
@@ -24,10 +25,9 @@ static poison_session_t session;
 
 int test_dhcp_init()
 {
-	char device[]="eth1";
 	int ret;
 
-	if (poison_init(&session, &device) != POISON_OK)
+	if (poison_init(&session, &test_device) != POISON_OK)
 	{
 		fprintf(stderr, "initialization failed: %s\n", session.errbuf);
 		return -1;

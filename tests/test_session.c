@@ -7,6 +7,7 @@
 #include <CUnit/Basic.h>
 
 #include "test_session.h"
+#include "test_config.h"
 
 int test_suite_session()
 {
@@ -29,9 +30,7 @@ static poison_session_t session;
 
 int test_session_init()
 {
-	char device[]="eth1";
-
-	if (poison_init(&session, &device) != POISON_OK)
+	if (poison_init(&session, &test_device) != POISON_OK)
 	{
 		fprintf(stderr, "initialization failed: %s\n", session.errbuf);
 		return -1;
