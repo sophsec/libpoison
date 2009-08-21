@@ -41,3 +41,6 @@ install: libpoison.so $(HEADERS)
 	mkdir -p $(INCLUDE_DIR)/libpoison
 #	for $$i in $(HEADERS) do; cp $$i $(INCLUDE_DIR)/libpoison/; done
 	cp src/*.h $(INCLUDE_DIR)/libpoison/
+
+test:
+	make -C tests
