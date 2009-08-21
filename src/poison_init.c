@@ -9,7 +9,7 @@
 /* intialize the session: returns negative on failure, 
    sets errbuf in session, unless session is NULL, in which case
    returns error code reflecting that  */
-int poison_init(poison_session_t *session, char *interface)
+int poison_init(poison_session_t *session, const char *interface)
 {
 	/* No session given? FAIL! */
 	if (!session)
