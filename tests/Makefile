@@ -3,7 +3,7 @@ include ../Makefile.in
 TEST_CFLAGS = $(CFLAGS) -I../src
 TEST_LIB_FLAGS = $(LIB_FLAGS) -L../ -lpoison -lcunit
 
-OBJS = test_session.o test_dhcp.o main.o
+OBJS = test_config.o test_session.o test_dhcp.o main.o
 
 all: tests
 	@LD_LIBRARY_PATH=".." ./tests
@@ -13,6 +13,9 @@ tests: $(OBJS)
 
 main.o: main.c
 	$(CC) $(TEST_CFLAGS) -c main.c -o main.o
+
+test_config.o: test_config.h test_config.c
+	$(CC) $(TEST_CFLAGS) -c test_config.c -o test_config.o
 
 test_session.o: test_session.c
 	$(CC) $(TEST_CFLAGS) -c test_session.c -o test_session.o
