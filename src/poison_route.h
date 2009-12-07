@@ -3,6 +3,10 @@
 
 #include "libpoison.h"
 #define PROCIPROUTE "/proc/net/route"
+#define ROUTEHEADER "Iface\tDestination\tGateway \t" \
+					"Flags\tRefCnt\tUse\tMetric\tMask\t" \
+					"\tMTU\tWindow\tIRTT" \
+					"                                       \n"
 
 typedef struct
 {
@@ -32,7 +36,7 @@ typedef struct
 	unsigned int irtt;
 	
 	/* next node */
-//	struct poison_route_t *next;
+	struct poison_route_t *next;
 } poison_route_t;
 
 #endif

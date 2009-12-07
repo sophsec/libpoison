@@ -7,6 +7,13 @@
 #include "poison_target.h"
 #include "poison_route.h"
 
+int poison_init(poison_session_t *session, const char *interface);
+int poison_check_init(poison_session_t *session);
+void poison_shutdown(poison_session_t *session);
+
+
+#define SESSION_INITIALIZED 77
+
 /* libpoison session: this is the highest data type
    used for intialization and clean up */
 typedef struct
@@ -38,5 +45,6 @@ typedef struct
 	poison_route_t *route;
 
 } poison_session_t;
+
 
 #endif

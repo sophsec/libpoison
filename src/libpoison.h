@@ -6,6 +6,7 @@
 #include "poison_session.h"
 #include "poison_dhcp.h"
 #include "poison_arp.h"
+#include "poison_utils.h"
 
 #define LIBPOISON_VERSION	"0.0.1"
 
